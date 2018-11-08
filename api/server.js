@@ -1,30 +1,18 @@
 const express = require('express');
-const helmet = require('helmet');
-const morgan = require('morgan');
 
-const gatekeeper = require('../gatekeeper/gatekeeperMiddleware.js')
+// npm i express helmet morgan
+// yarn add express helmet morgan
+
+const gatekeeper = require('../gatekeeper/gatekeeperMiddleware.js');
+const productRouter = require('../products/productRouter.js');
+const configureMiddleware = require('../config/middleware.js');
 
 const server = express();
 
 // configure middleware
-// ORDER MATTERS! they will execute top to bottom
-server.use(express.json()); // built in
-server.use(helmet()); // third party
-server.use(morgan('short')); // third party
+configureMiddleware(server);
 
 // custom
-// function gatekeeper(req, res, next) {
-//   // next points to the next middleware/route handler in the queue
-//   if (req.query.pass === 'mellon') {
-//     console.log('welcome travelers');
-
-//     req.welcomeMessage = 'welcome to the mines of Moria';
-
-//     next(); // continue to the next middleware
-//   } else {
-//     res.send('you shall not pass!');
-//   }
-// }
 
 // server.use(gatekeeper); // using middleware globally
 
@@ -37,15 +25,26 @@ server.get('/secret', gatekeeper, (req, res) => {
   res.send(req.welcomeMessage);
 });
 
+server.use('/api/products', productRouter);
+
+server.get('/api/clients', (req, res) => {
+  res.send('GET /clients');
+});
+
+server.get('/api/orders', (req, res) => {
+  res.send('GET /orders');
+});
+
 module.exports = server;
 
-// module.exports = {
-//     listen: (port, callback) => {
-//         console.log('ran the server');
-//         callback()
-//     }
-// }
+// products, clients, orders
 
-// custom middleware
-// http://localhost:8200/?pass==mellon
-// next points to the next middleware/route handler in the q
+// we can organize our files by type, by feature or hybrid
+
+// writing code? nope, creating value.
+
+// what is code? is a communication device
+// reveals intent to the next developer (might be you)
+// it should be clear, reveal intent and have no surprises
+
+// validateAndAddProduct(product) <<<< makes me nervous
